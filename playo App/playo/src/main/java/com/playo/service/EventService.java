@@ -39,12 +39,7 @@ public class EventService {
     }
     public List<Event> getMyEvents() {
         User user = authenticationService.getCurrentUser();
-        User user1 = User.builder()
-                .firstName(user.getFirstName())
-                .Id(user.getId())
-                .lastName(user.getLastName())
-                .role(user.getRole())
-                .email(user.getEmail())
+        User user1 = User.builder().firstName(user.getFirstName()).id(user.getId()).lastName(user.getLastName()).email(user.getEmail()).password(null)
                 .build();
        // Optional<Event> optionalEvents = eventRepository.findByOrganizer(user1);
         //return optionalEvents.map(Collections::singletonList).orElse(Collections.emptyList());
