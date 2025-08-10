@@ -46,4 +46,10 @@ public class EventController {
         }
     }
 
+    @PostMapping("/apply/{eventId}")
+    public ResponseEntity<String> applyToEvent(@PathVariable Long eventId) {
+        String result = eventService.applyToEvent(eventId);
+        return ResponseEntity.ok(result);
+    }
+
 }

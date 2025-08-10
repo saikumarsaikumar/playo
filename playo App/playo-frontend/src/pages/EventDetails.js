@@ -48,6 +48,20 @@ const EventDetails = () => {
         }
     };
 
+
+     const handleApplyToEvent = async (eventId) => {
+        try {
+            const response = await EventService.applyToEvent(eventId);
+            toast.success(response.data);
+            //fetchMyApplications(); // Refresh applications
+        } catch (error) {
+            const errorMessage = error.response?.data || 'Failed to apply to event';
+            toast.error(errorMessage);
+        }
+    };
+
+
+    
     const formatDateTime = (dateTime) => {
         if (!dateTime) return 'Not specified';
         const date = new Date(dateTime);
@@ -191,7 +205,9 @@ const EventDetails = () => {
 
             {/* Action Buttons */}
             <div className="mt-4 text-center">
-                <Button variant="success" size="lg" className="me-2">
+                <Button variant="success" size="lg" className="me-2"
+                onClick={() => handleApplyToEvent(eventDetails.id)}
+                >
                     Apply to Join
                 </Button>
                 <Button variant="outline-primary" size="lg">

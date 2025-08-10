@@ -7,6 +7,7 @@ import com.playo.dto.ParticipantDto;
 import com.playo.entity.Event;
 import com.playo.entity.EventParticipation;
 import com.playo.entity.EventStatus;
+import com.playo.entity.ParticipationStatus;
 import com.playo.exceptions.CustomAuthenticationException;
 import com.playo.repository.EventParticipationRepository;
 import com.playo.repository.EventRepository;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.playo.entity.ParticipationStatus.APPLIED;
 
 @Service
 
@@ -80,10 +83,13 @@ public class EventService {
 
         // 4. Get participants only if user is organizer
         List<ParticipantDto> participants = new ArrayList<>();
-        if (isOrganizer) {
+
             // Get List<EventParticipation> by event ID
             List<EventParticipation> participations = eventParticipationRepository.findByEventId(eventId);
-
+            int toatalParticipents = participations.size();
+            if(!isOrganizer){
+                participations.removeIf(participant -> !participant.getUser().getId().equals(currentUser.getId()));
+            }
             // Extract List<UserID> from participations
             List<Long> userIds = participations.stream()
                     .map(participation -> participation.getUser().getId())
@@ -110,7 +116,7 @@ public class EventService {
                                 .build();
                     })
                     .collect(Collectors.toList());
-        }
+
 
         // 5. Build and return EventDetailsDto with safe organizer data
         return EventDetailsDto.builder()
@@ -122,7 +128,7 @@ public class EventService {
                 .otherRequirements(event.getOtherRequirements())
                 .organizer(convertToOrganizerDto(event.getOrganizer())) // Safe organizer data
                 .participants(participants) // Empty if not organizer
-                .totalParticipants(participants.size())
+                .totalParticipants(toatalParticipents)
                 .isOrganizer(isOrganizer) // Indicates permission level
                 .build();
     }
@@ -137,4 +143,47 @@ public class EventService {
                 // Intentionally not including email, ID, or other sensitive data
                 .build();
     }
+
+
+    public String applyToEvent(Long eventId) {
+        try {
+            User currentUser = authenticationService.getCurrentUser();
+
+            Optional<Event> eventOptional = eventRepository.findById(eventId);
+            if (eventOptional.isEmpty()) {
+                return "Event not found";
+            }
+
+            Event event = eventOptional.get();
+
+            // Check if user is the organizer
+            if (event.getOrganizer().getId().equals(currentUser.getId())) {
+                return "You cannot apply to your own event";
+            }
+            // Check if user has already applied
+            if (eventParticipationRepository.findByEventIdAndUserId(event.getId(), currentUser.getId()).size()>0) {
+                return "You have already applied to this event";
+            }
+
+            // Check if event is full
+            Long acceptedCount = event.getParticipants().stream().count();
+            if (acceptedCount >= event.getPlayerLimit()) {
+                return "Event is full";
+            }
+
+            // Create application
+            EventParticipation participation = new EventParticipation();
+            participation.setEvent(event);
+            participation.setUser(currentUser);
+            participation.setParticipationStatus(APPLIED);
+
+            eventParticipationRepository.save(participation);
+            return "Application submitted successfully";
+
+        } catch (Exception e) {
+            throw new CustomAuthenticationException("Failed to apply to event");
+        }
+    }
+
+
 }
