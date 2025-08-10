@@ -121,6 +121,7 @@ bin/
 **/application-local.properties
 **/application-dev.properties
 **/application-prod.properties
+**/package-lock.json
 
 # ==============================================================================
 # REACT FRONTEND - Global patterns for any React/Node.js projects
