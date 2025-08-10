@@ -1,5 +1,6 @@
 package com.playo.controller;
 
+import com.playo.dto.EventDetailsDto;
 import com.playo.entity.Event;
 import com.playo.service.EventService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -33,6 +34,22 @@ public class EventController {
     @GetMapping("/getMyEvents")
     public ResponseEntity<List<Event>> getMyEvents(){
         return ResponseEntity.ok(eventService.getMyEvents());
+    }
+
+    @GetMapping("/details/{eventId}")
+    public ResponseEntity<EventDetailsDto> getEventDetails(@PathVariable Long eventId) {
+        try {
+            EventDetailsDto eventDetails = eventService.getEventDetailsById(eventId);
+            return ResponseEntity.ok(eventDetails);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/apply/{eventId}")
+    public ResponseEntity<String> applyToEvent(@PathVariable Long eventId) {
+        String result = eventService.applyToEvent(eventId);
+        return ResponseEntity.ok(result);
     }
 
 }

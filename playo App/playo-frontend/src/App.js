@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Events from './pages/Events';
 import MyEvents from './pages/MyEvents';
+import EventDetails from './pages/EventDetails';
 import Navbar from './components/Navbar';
 import { ToastContainer } from 'react-toastify';
 import CreateEvent from './pages/CreateEvent';
@@ -20,6 +21,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/events" element={<Events />} />
+                <Route path="/events/:eventId" element={<EventDetails />} /> {/* New route */}
                 <Route path="/my-events" element={<MyEvents />} />
                 <Route path="/createEvent" element={<CreateEvent />} />
 

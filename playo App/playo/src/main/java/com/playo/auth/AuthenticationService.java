@@ -4,18 +4,15 @@ import com.playo.config.JwtService;
 import com.playo.exceptions.CustomAuthenticationException;
 import com.playo.user.Role;
 import com.playo.user.User;
-import com.playo.user.UserRepository;
-import io.jsonwebtoken.impl.crypto.JwtSigner;
+import com.playo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 @Service
