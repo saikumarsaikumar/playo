@@ -11,6 +11,7 @@ const EventDetails = () => {
     const { token } = useSelector((state) => state.auth);
     
     const [eventDetails, setEventDetails] = useState(null);
+    const [applied,setApplied]=useState(true);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -53,6 +54,7 @@ const EventDetails = () => {
         try {
             const response = await EventService.applyToEvent(eventId);
             toast.success(response.data);
+            setApplied(true)
             //fetchMyApplications(); // Refresh applications
         } catch (error) {
             const errorMessage = error.response?.data || 'Failed to apply to event';
